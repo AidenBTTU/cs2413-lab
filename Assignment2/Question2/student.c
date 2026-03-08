@@ -24,15 +24,42 @@
 
 struct TreeNode {
     int val;
-    struct TreeNode *left;
-    struct TreeNode *right;
+    struct TreeNode* left;
+    struct TreeNode* right;
 };
 
+int verify(struct TreeNode* root, long long min, long long max) {
+    if (root == NULL) {
+        return 0; // This isnt a leaf, so it has no height. Still valid
+    }
+    if ((long long)root->val <= min || (long long)root->val >= max) {
+        return -1;
+    }
+    int leftHeight = verify(root->left, min, root->val);
+    if (leftHeight == -1) { //The value in the left has to be less than the value in the bridge above it but no real constriciton for min
+        return -1;  //I have to propogate the negative value up
+    }
+    int rightHeight = verify(root->right, root->val, max);
+    if (rightHeight == -1) { //Vice versa
+        return -1;
+    }
+    int diff = leftHeight - rightHeight;  //no include for abs. unsure if im allowed to use it?
+    if (diff < -1 || diff > 1) {
+        return -1;
+    }
+
+    //If we have gotten this far, the leg is valid so we need to know its height
+    if (leftHeight >= rightHeight) {
+        return leftHeight+1;
+    }
+    else {
+        return rightHeight+1;
+    }
+}
+
 bool isAVL(struct TreeNode* root) {
-    // TODO: implement
-    // Hint: One common O(n) approach:
-    // - Use a recursive helper that returns the subtree height,
-    //   and returns -1 if subtree is invalid (BST violation or unbalanced).
-    (void)root;
+    if ((verify(root, -1000000000000000000LL, 1000000000000000000)) != -1) {
+        return true;
+    }
     return false;
 }
