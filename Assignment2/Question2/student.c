@@ -58,6 +58,7 @@ int verify(struct TreeNode* root, long long min, long long max) {
 }
 
 bool isAVL(struct TreeNode* root) {
+    //arbitary big value
     if ((verify(root, -1000000000000000000LL, 1000000000000000000)) != -1) {
         return true;
     }
