@@ -54,8 +54,19 @@ struct TreeNode {
     struct TreeNode *left;
     struct TreeNode *right;
 };
+int sumWithPlace(struct TreeNode* root, int totVal) {
+    if (root == NULL) {
+        return 0;
+    }
+    totVal = totVal * 10 + root->val;
 
+    if (root->left == NULL && root->right == NULL) {
+        return totVal;
+    }
+
+    return sumWithPlace(root->left, totVal) + sumWithPlace(root->right, totVal);
+}
 
 int sumNumbers(struct TreeNode* root) {
-      // TODO: implement
+    return sumWithPlace(root, 0);
 }
