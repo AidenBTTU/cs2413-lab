@@ -10,7 +10,7 @@ use the same element twice.
 
 For this lab, you should solve the problem using a hash-based idea.
 
-Function:
+Function
 int* twoSum(int* nums, int numsSize, int target, int* returnSize);
 
 Notes:
@@ -64,7 +64,20 @@ whose sum equals target.
 */
 int* twoSum(int* nums, int numsSize, int target, int* returnSize) {
     /* Write your code here */
-
+    Node* tempHash[TABLE_SIZE] = { 0 };
+    *returnSize = 2;
+    for (int i = 0; i < numsSize; i++) {
+        int inverse = target - nums[i];
+        int value;
+        if (find(tempHash, inverse, &value)) {
+            int* result = (int*)malloc(2 * sizeof(int));
+            result[0] = value;
+            result[1] = i;
+            freeTable(tempHash);
+            return result;
+        }
+        insert(tempHash, nums[i], i);  // if not found, add to table
+    }
     *returnSize = 0;
     return NULL;
 }
@@ -74,7 +87,7 @@ Optional helper: compute a hash index for a key.
 */
 static int hash(int key) {
     /* Write your code here if you use this helper */
-    return 0;
+    return key % TABLE_SIZE;
 }
 
 /*
@@ -82,6 +95,12 @@ Optional helper: insert (key, value) into the hash table.
 */
 static void insert(Node* table[], int key, int value) {
     /* Write your code here if you use this helper */
+    int index = hash(key);
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->key = key;
+    newNode->value = value;
+    newNode->next = table[index];
+    table[index] = newNode;
 }
 
 /*
@@ -90,13 +109,25 @@ If found, store the associated value in *value and return 1.
 Otherwise return 0.
 */
 static int find(Node* table[], int key, int* value) {
-    /* Write your code here if you use this helper */
+    int index = hash(key);
+    Node* current = table[index];
+    while (current != NULL) {
+        if (current->key == key) {
+            *value = current->value;
+            return 1;  // found
+        }
+        current = current->next;
+    }
     return 0;
 }
+
 
 /*
 Optional helper: free all memory used by the hash table.
 */
 static void freeTable(Node* table[]) {
     /* Write your code here if you use this helper */
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        free(table[i]);
+    }
 }
